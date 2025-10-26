@@ -52,9 +52,16 @@ body {
   opacity: 0.8;
 }
 
+.header-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
 .external-link-button {
   display: inline-block;
-  margin-top: 1rem;
   padding: 0.6rem 1.2rem;
   border: 2px solid var(--primary-color);
   border-radius: 8px;
@@ -62,6 +69,10 @@ body {
   text-decoration: none;
   font-weight: 600;
   transition: all 0.3s ease;
+  background-color: transparent; /* For button element */
+  font-family: var(--font-family); /* For button element */
+  font-size: 1rem; /* For button element to match body */
+  cursor: pointer; /* For button element */
 }
 
 .external-link-button:hover {
@@ -84,12 +95,51 @@ body {
   height: fit-content;
 }
 
+.templates-container {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.templates-container h3 {
+  color: var(--heading-color);
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.templates-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.75rem;
+}
+
+.template-button {
+  padding: 0.75rem 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: #f9fbfb;
+  color: var(--primary-color);
+  font-family: var(--font-family);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease-in-out;
+}
+
+.template-button:hover {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
 .form-container h2 {
   color: var(--heading-color);
   margin-bottom: 1.5rem;
-  border-bottom: 2px solid var(--primary-color);
-  padding-bottom: 0.5rem;
-  display: inline-block;
+  text-align: center;
 }
 
 .form-group {
@@ -154,6 +204,70 @@ body {
 .generate-button:disabled {
   background: #bdc3c7;
   cursor: not-allowed;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+
+/* --- Radio Buttons --- */
+.radio-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.radio-option {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.radio-option input[type="radio"] {
+    opacity: 0;
+    position: absolute;
+    width: 0;
+    height: 0;
+}
+
+.radio-option label {
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    color: var(--text-color);
+    margin-bottom: 0;
+}
+
+.radio-option label::before {
+    content: '';
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border-color);
+    border-radius: 50%;
+    margin-right: 0.5rem;
+    transition: all 0.2s ease;
+    background-color: #fff;
+}
+
+.radio-option input[type="radio"]:checked + label::before {
+    border-color: var(--primary-color);
+    background-color: var(--primary-color);
+    box-shadow: 0 0 0 2px white inset;
+}
+
+.radio-option input[type="radio"]:focus + label::before {
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
 }
 
 
@@ -324,6 +438,36 @@ body {
     cursor: not-allowed;
 }
 
+/* --- PDF Export --- */
+.export-container {
+    margin-bottom: 1.5rem;
+    text-align: right;
+}
+
+.export-button {
+    padding: 0.6rem 1.2rem;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.export-button:hover:not(:disabled) {
+    background-color: #3a7ac8;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.export-button:disabled {
+    background-color: #bdc3c7;
+    cursor: not-allowed;
+}
+
+
 /* --- Loading and Error States --- */
 .loading-overlay {
     display: flex;
@@ -373,6 +517,133 @@ body {
   border: 1px solid var(--error-color);
 }
 
+/* --- Modal Styles --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-content {
+  background-color: var(--form-background);
+  padding: 2.5rem 2rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  animation: slide-down 0.3s ease-out;
+}
+
+@keyframes slide-down {
+  from {
+    transform: translateY(-30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+
+.modal-content h2 {
+  text-align: center;
+  color: var(--heading-color);
+  margin-bottom: 1.5rem;
+}
+
+.modal-close-button {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 2.5rem;
+  color: #aaa;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.modal-close-button:hover {
+  color: #333;
+}
+
+/* --- Accordion Styles --- */
+.accordion {
+  border-top: 1px solid var(--border-color);
+}
+
+.accordion-item {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.accordion-header {
+  width: 100%;
+  background-color: transparent;
+  border: none;
+  padding: 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--heading-color);
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-family);
+}
+
+.accordion-header:hover {
+  background-color: var(--background-color);
+}
+
+.accordion-icon {
+  font-size: 0.8rem;
+  transition: transform 0.3s ease-in-out;
+}
+
+.accordion-icon.open {
+  transform: rotate(180deg);
+}
+
+.accordion-content {
+  padding: 0 1rem 1rem 1rem;
+  background-color: #fcfcfc;
+}
+
+.accordion-content ul {
+  list-style: none;
+  padding-left: 1rem;
+}
+
+.accordion-content li {
+  margin-bottom: 0.5rem;
+}
+
+.accordion-content a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.accordion-content a:hover {
+  color: #3a7ac8;
+  text-decoration: underline;
+}
+
 /* --- Responsive Design --- */
 @media (max-width: 992px) {
   .main-content {
@@ -389,5 +660,11 @@ body {
   }
   .refinement-form {
       flex-direction: column;
+  }
+  .header-buttons {
+    flex-direction: column;
+  }
+  .modal-content {
+    padding: 2rem 1.5rem 1.5rem;
   }
 }
