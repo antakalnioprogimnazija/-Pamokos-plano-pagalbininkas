@@ -35,34 +35,16 @@ interface LessonPlan {
   motivation: string;
 }
 
-const curriculumLinks = {
-  'Pradinis ugdymas (1-4 kl.)': {
-    'Lietuvių kalba ir literatūra': 'https://emokykla.lt/bendrosios-programos/bendroji-programa/2-lietuviu-kalba-ir-literatura-pradinio-ugdymo-bendroji-programa/',
-    'Matematika': 'https://emokykla.lt/bendrosios-programos/bendroji-programa/3-matematika-pradinio-ugdymo-bendroji-programa/',
-    'Pasaulio pažinimas': 'https://emokykla.lt/bendrosios-programos/bendroji-programa/10-pasaulio-pazinimas-pradinio-ugdymo-bendroji-programa/',
-    'Užsienio kalba (I)': 'https://emokykla.lt/bendrosios-programos/bendroji-programa/6-uzsienio-kalba-pirmoji-pradinio-ugdymo-bendroji-programa/',
-    'Meninis ugdymas (Dailė, Muzika, Šokis)': 'https://emokykla.lt/bendrosios-programos/bendroji-programa/8-meninis-ugdymas-pradinio-ugdymo-bendroji-programa/',
-  },
-  'Pagrindinis ugdymas (5-10 kl.)': {
-    'Lietuvių kalba ir literatūra': 'https://emokykla.lt/bendrosios-programos/bendroji-programa/18-lietuviu-kalba-ir-literatura-pagrindinio-ir-vidurinio-ugdymo-bendrosios-programos/',
-    'Matematika': 'https://emokykla.lt/bendrosios-programos/bendroji-programa/19-matematika-pagrindinio-ir-vidurinio-ugdymo-bendrosios-programos/',
-    'Gamtos mokslai (Biologija, Chemija, Fizika)': 'https://emokykla.lt/bendrosios-programos/bendroji-programa/15-gamtos-mokslai-pagrindinio-ugdymo-bendroji-programa/',
-    'Istorija': 'https://emokykla.lt/bendrosios-programos/bendroji-programa/23-istorija-pagrindinio-ugdymo-bendroji-programa/',
-    'Geografija': 'https://emokykla.lt/bendrosios-programos/bendroji-programa/24-geografija-pagrindinio-ugdymo-bendroji-programa/',
-    'Informatika': 'https://emokykla.lt/bendrosios-programos/bendroji-programa/16-informatika-pagrindinio-ugdymo-bendroji-programa/',
-    'Užsienio kalba (I)': 'https://emokykla.lt/bendrosios-programos/bendroji-programa/20-uzsienio-kalba-pirmoji-pagrindinio-ugdymo-bendroji-programa/',
-  },
-  'Vidurinis ugdymas (11-12 kl.)': {
-    'Lietuvių kalba ir literatūra': 'https://emokykla.lt/bendrosios-programos/bendroji-programa/18-lietuviu-kalba-ir-literatura-pagrindinio-ir-vidurinio-ugdymo-bendrosios-programos/',
-    'Matematika': 'https://emokykla.lt/bendrosios-programos/bendroji-programa/19-matematika-pagrindinio-ir-vidurinio-ugdymo-bendrosios-programos/',
-    'Biologija': 'https://emokykla.lt/bendrosios-programos/bendroji-programa/28-biologija-vidurinio-ugdymo-bendroji-programa/',
-    'Chemija': 'https://emokykla.lt/bendrosios-programos/bendroji-programa/29-chemija-vidurinio-ugdymo-bendroji-programa/',
-    'Fizika': 'https://emokykla.lt/bendrosios-programos/bendroji-programa/30-fizika-vidurinio-ugdymo-bendroji-programa/',
-    'Istorija': 'https://emokykla.lt/bendrosios-programos/bendroji-programa/34-istorija-vidurinio-ugdymo-bendroji-programa/',
-    'Geografija': 'https://emokykla.lt/bendrosios-programos/bendroji-programa/35-geografija-vidurinio-ugdymo-bendroji-programa/',
-    'Informatika': 'https://emokykla.lt/bendrosios-programos/bendroji-programa/26-informatika-vidurinio-ugdymo-bendroji-programa/',
-  },
+const glossaryData: { [key: string]: string } = {
+  'Diferencijuotos': 'Tai mokymo strategija, kai mokytojas pritaiko ugdymo turinį, procesą, aplinką ir vertinimą, atsižvelgdamas į skirtingus mokinių mokymosi poreikius, gebėjimus ir interesus.',
+  'Diferencijuoti': 'Tai mokymo strategija, kai mokytojas pritaiko ugdymo turinį, procesą, aplinką ir vertinimą, atsižvelgdamas į skirtingus mokinių mokymosi poreikius, gebėjimus ir interesus.',
+  'Formuojamasis vertinimas': 'Nuolatinis vertinimas pamokoje, skirtas stebėti mokinio pažangą, suprasti jo mokymosi sunkumus ir laiku suteikti pagalbą. Jo tikslas – gerinti mokymąsi, o ne rašyti pažymį.',
+  'Kaupiamasis vertinimas': 'Vertinimo būdas, kai per tam tikrą laikotarpį surinkti mokinio pasiekimų įrodymai (pvz., taškai už užduotis, aktyvumą) sumuojami į vieną bendrą įvertinimą (pažymį).',
+  'Diagnostinis vertinimas': 'Vertinimas, atliekamas temos ar kurso pradžioje, siekiant nustatyti esamas mokinių žinias, gebėjimus ir supratimą. Padeda mokytojui planuoti tolesnį mokymą.',
+  'Kompetencijos': 'Gebėjimas atlikti tam tikrą veiklą, remiantis įgytomis žiniomis, įgūdžiais, vertybėmis ir požiūriais. Lietuvos ugdymo sistemoje išskiriamos kelios pagrindinės kompetencijos (pvz., komunikavimo, pažinimo, socialinė, pilietinė).',
+  'Gebėjimai': 'Mokinio įgytos žinios ir įgūdžiai, leidžiantys jam sėkmingai atlikti tam tikras užduotis ar veiklas. Gebėjimai yra kompetencijų sudedamoji dalis.'
 };
+
 
 const App = () => {
   const [grade, setGrade] = useState('');
@@ -81,8 +63,7 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
-  const [isCurriculumModalOpen, setIsCurriculumModalOpen] = useState(false);
-  const [openAccordion, setOpenAccordion] = useState<string | null>(null);
+  const [isAllCopied, setIsAllCopied] = useState(false);
 
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
@@ -98,6 +79,8 @@ const App = () => {
     fontSize: 'medium',
     isCompactLayout: false,
   });
+  
+  const [selectedTerm, setSelectedTerm] = useState<{ term: string; definition: string; } | null>(null);
 
 
   const chatRef = useRef<Chat | null>(null);
@@ -219,6 +202,21 @@ Sugeneruok planą.`;
     });
   };
 
+  const handleCopyAllDiaryEntries = () => {
+    if (!lessonPlan || !lessonPlan.eDiaryEntry) return;
+
+    const { classwork, homework, notes, thematicPlanning, individualWork } = lessonPlan.eDiaryEntry;
+    
+    const allEntriesText = `Klasės darbas: ${classwork}\n\nNamų darbai: ${homework}\n\nPastabos apie pamoką: ${notes}\n\nTeminis planavimas: ${thematicPlanning}\n\nIndividualus darbas: ${individualWork}`;
+
+    navigator.clipboard.writeText(allEntriesText).then(() => {
+        setIsAllCopied(true);
+        setTimeout(() => setIsAllCopied(false), 2000);
+    }).catch(err => {
+        console.error('Failed to copy all diary entries: ', err);
+    });
+  };
+
   const handlePdfSettingsChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     if (type === 'checkbox') {
@@ -236,103 +234,126 @@ Sugeneruok planą.`;
   };
 
   const handleExportPDF = async () => {
-    const input = document.getElementById('lesson-plan-content');
-    if (!input || !lessonPlan) return;
+    const contentContainer = document.getElementById('lesson-plan-content');
+    if (!contentContainer || !lessonPlan) return;
 
     setIsExporting(true);
     setExportSuccess(false);
     setExportError(null);
 
-    const sectionSelectors = {
-        includeGeneralNotes: '.general-notes-card',
-        includeLessonOverview: '.lesson-overview-card',
-        includeLessonActivities: '.lesson-activities-card',
-        includeHomework: '.homework-card',
-        includeEDiaryEntry: '.ediary-card',
-        includeMotivation: '.motivation-card'
-    };
+    // Get all cards to be exported based on settings
+    const cards = Array.from(contentContainer.querySelectorAll('.card'));
+    const visibleCards = cards.filter(card => {
+        if (card.classList.contains('general-notes-card') && !pdfSettings.includeGeneralNotes) return false;
+        if (card.classList.contains('lesson-overview-card') && !pdfSettings.includeLessonOverview) return false;
+        if (card.classList.contains('lesson-activities-card') && !pdfSettings.includeLessonActivities) return false;
+        if (card.classList.contains('homework-card') && !pdfSettings.includeHomework) return false;
+        if (card.classList.contains('ediary-card') && !pdfSettings.includeEDiaryEntry) return false;
+        if (card.classList.contains('motivation-card') && !pdfSettings.includeMotivation) return false;
+        return true;
+    }).map(card => card as HTMLElement);
 
-    const tempClasses: { element: HTMLElement; className: string }[] = [];
     const hiddenElements: HTMLElement[] = [];
-
     try {
-        // Apply temporary classes for export styling
+        // Apply temporary global styles for export
         const fontClass = `export-font-${pdfSettings.fontSize}`;
         const layoutClass = pdfSettings.isCompactLayout ? 'export-layout-compact' : '';
-        if (fontClass) input.classList.add(fontClass);
-        if (layoutClass) input.classList.add(layoutClass);
+        if (fontClass) contentContainer.classList.add(fontClass);
+        if (layoutClass) contentContainer.classList.add(layoutClass);
 
-        // Hide sections based on settings
-        for (const [key, selector] of Object.entries(sectionSelectors)) {
-            if (!pdfSettings[key as keyof typeof pdfSettings]) {
-                const element = input.querySelector(selector) as HTMLElement;
-                if (element) {
-                    element.classList.add('export-hidden');
-                    tempClasses.push({ element, className: 'export-hidden' });
-                }
-            }
-        }
-        
-        // Hide UI elements
-        const uiElementsToHide = input.querySelectorAll('.copy-button, .refinement-container');
+        // Hide UI elements globally before rendering
+        const uiElementsToHide = contentContainer.querySelectorAll('.copy-button, .copy-all-button, .refinement-container, .glossary-term');
         uiElementsToHide.forEach(el => {
             const htmlEl = el as HTMLElement;
             htmlEl.style.visibility = 'hidden';
             hiddenElements.push(htmlEl);
         });
 
-        // Generate PDF
-        const canvas = await html2canvas(input, { scale: 2 });
-        const imgData = canvas.toDataURL('image/png');
+        // PDF setup
         const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
-        const imgProps = pdf.getImageProperties(imgData);
         const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-        
-        let position = 0;
-        let heightLeft = pdfHeight;
         const pageHeight = pdf.internal.pageSize.getHeight();
+        const margin = 15; // 15mm margin
+        const contentWidth = pdfWidth - margin * 2;
+        let yPos = margin;
+        
+        for (let i = 0; i < visibleCards.length; i++) {
+            const card = visibleCards[i];
+            const canvas = await html2canvas(card, { scale: 2 });
+            const imgData = canvas.toDataURL('image/png');
+            const imgProps = pdf.getImageProperties(imgData);
 
-        pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
-        heightLeft -= pageHeight;
+            // Calculate image height to fit content width
+            const imgHeight = (imgProps.height * contentWidth) / imgProps.width;
 
-        while (heightLeft > 0) {
-            position -= pageHeight;
-            pdf.addPage();
-            pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
-            heightLeft -= pageHeight;
+            // Check if it fits on the current page
+            if (yPos + imgHeight > pageHeight - margin && yPos > margin) {
+                pdf.addPage();
+                yPos = margin; // Reset position for new page
+            }
+
+            pdf.addImage(imgData, 'PNG', margin, yPos, contentWidth, imgHeight);
+            yPos += imgHeight + 5; // Add image height and a 5mm gap between cards
         }
-
+        
         const cleanTopic = lessonPlan.lessonOverview.topic.toLowerCase().replace(/[^a-z0-9ąčęėįšųūž]+/g, ' ').trim().replace(/\s+/g, '-');
         pdf.save(`pamokos-planas-${cleanTopic}.pdf`);
         
         setExportSuccess(true);
         setTimeout(() => {
             setIsExportModalOpen(false);
-        }, 2000);
+        }, 2500);
 
     } catch (error) {
         console.error("Klaida eksportuojant PDF:", error);
         setExportError("Nepavyko eksportuoti PDF. Bandykite dar kartą.");
     } finally {
-        // Cleanup: remove temporary classes and restore visibility
+        // Cleanup
         const fontClass = `export-font-${pdfSettings.fontSize}`;
         const layoutClass = pdfSettings.isCompactLayout ? 'export-layout-compact' : '';
-        if (fontClass) input.classList.remove(fontClass);
-        if (layoutClass) input.classList.remove(layoutClass);
-
-        tempClasses.forEach(({ element, className }) => element.classList.remove(className));
+        if (fontClass) contentContainer.classList.remove(fontClass);
+        if (layoutClass) contentContainer.classList.remove(layoutClass);
         hiddenElements.forEach(el => (el.style.visibility = 'visible'));
-        
         setIsExporting(false);
     }
+  };
+
+
+  const renderTextWithGlossaryTerms = (text: string) => {
+    if (!text) return text;
+
+    const terms = Object.keys(glossaryData);
+    const regex = new RegExp(`\\b(${terms.join('|')})\\b`, 'gi');
+  
+    const parts = text.split(regex);
+  
+    return parts.map((part, index) => {
+      const lowerCasePart = part.toLowerCase();
+      const originalTerm = terms.find(term => term.toLowerCase() === lowerCasePart);
+  
+      if (originalTerm) {
+        return (
+          <span
+            key={index}
+            className="glossary-term"
+            onClick={(e) => {
+              e.stopPropagation();
+              setSelectedTerm({ term: originalTerm, definition: glossaryData[originalTerm] })
+            }}
+          >
+            {part}
+          </span>
+        );
+      }
+      return part;
+    });
   };
 
   const renderFormattedText = (text: string) => {
     if (!text) return null;
     return text.split('\n').map((line, index) => (
       <React.Fragment key={index}>
-        {line}
+        {renderTextWithGlossaryTerms(line)}
         <br />
       </React.Fragment>
     ));
@@ -340,10 +361,6 @@ Sugeneruok planą.`;
 
   const evaluationOptions = ['Formuojamasis', 'Kaupiamasis', 'Diagnostinis', 'Tarpusavio vertinimas', 'Kitas'];
   
-  const toggleAccordion = (category: string) => {
-    setOpenAccordion(openAccordion === category ? null : category);
-  };
-
   return (
     <div className="container">
       <header className="header">
@@ -358,12 +375,6 @@ Sugeneruok planą.`;
             >
               Visos bendrosios programos
             </a>
-            <button 
-                onClick={() => setIsCurriculumModalOpen(true)}
-                className="external-link-button"
-            >
-                Programos pagal klases
-            </button>
         </div>
       </header>
       <main className="main-content">
@@ -371,31 +382,73 @@ Sugeneruok planą.`;
           <h2>Pamokos informacija</h2>
           <form onSubmit={handleInitialSubmit}>
             <div className="form-group">
-              <label htmlFor="grade">Klasė / Grupė <span className="required">*</span></label>
+              <div className="label-wrapper">
+                <label htmlFor="grade">Klasė / Grupė <span className="required">*</span></label>
+                <div className="tooltip">
+                    <span className="tooltip-icon">ⓘ</span>
+                    <p className="tooltip-text">Nurodykite klasę, pvz., 7a, arba grupę darželyje, pvz., 'Drugelių' grupė.</p>
+                </div>
+              </div>
               <input type="text" id="grade" value={grade} onChange={(e) => setGrade(e.target.value)} placeholder="pvz., 5b klasė, 'Varpelių' grupė" required />
             </div>
             <div className="form-group">
-              <label htmlFor="subject">Dalykas <span className="required">*</span></label>
+              <div className="label-wrapper">
+                <label htmlFor="subject">Dalykas <span className="required">*</span></label>
+                <div className="tooltip">
+                    <span className="tooltip-icon">ⓘ</span>
+                    <p className="tooltip-text">Įveskite pamokos dalyką, pvz., Lietuvių kalba ir literatūra, Dailė.</p>
+                </div>
+              </div>
               <input type="text" id="subject" value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="pvz., Matematika, Pasaulio pažinimas" required/>
             </div>
             <div className="form-group">
-              <label htmlFor="topic">Pamokos tema <span className="required">*</span></label>
+              <div className="label-wrapper">
+                <label htmlFor="topic">Pamokos tema <span className="required">*</span></label>
+                <div className="tooltip">
+                    <span className="tooltip-icon">ⓘ</span>
+                    <p className="tooltip-text">Kuo konkretesnė tema, tuo geresnis planas. Pvz., 'Veiksmažodžių asmenavimas', 'Rudens peizažas'.</p>
+                </div>
+              </div>
               <input type="text" id="topic" value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="pvz., Trupmenų sudėtis, K. Donelaičio 'Metai'" required/>
             </div>
             <div className="form-group">
-              <label htmlFor="goal">Pamokos tikslas ir uždaviniai (nebūtina)</label>
-              <textarea id="goal" value={goal} onChange={(e) => setGoal(e.target.value)} placeholder="Aprašykite, ką mokiniai turėtų žinoti, suprasti ar gebėti padaryti po šios pamokos. Pvz., 'Mokiniai gebės atpažinti ir įvardinti pagrindines K. Donelaičio poemos 'Metai' temas.'"></textarea>
+              <div className="label-wrapper">
+                <label htmlFor="goal">Pamokos tikslas ir uždaviniai (nebūtina)</label>
+                <div className="tooltip">
+                    <span className="tooltip-icon">ⓘ</span>
+                    <p className="tooltip-text">Nebūtina, bet padeda sukurti tikslesnį planą. Galite nurodyti, ką mokiniai išmoks arba gebės atlikti.</p>
+                </div>
+              </div>
+              <textarea id="goal" value={goal} onChange={(e) => setGoal(e.target.value)} placeholder="Aprašykite, ką mokiniai turėtų žinoti, suprasti ar gebėti padaryti po šios pamokos. Pvz., 'Mokiniai gebės atpažinti ir įvardinti pagrindines K. Donelaičio poemos 'Metai' temos.'"></textarea>
             </div>
             <div className="form-group">
-              <label htmlFor="activities">Papildomos idėjos ar veiklos (nebūtina)</label>
+              <div className="label-wrapper">
+                <label htmlFor="activities">Papildomos idėjos ar veiklos (nebūtina)</label>
+                 <div className="tooltip">
+                    <span className="tooltip-icon">ⓘ</span>
+                    <p className="tooltip-text">Pateikite savo idėjų, kurias asistentas galėtų išplėtoti. Pvz., 'Darbas grupėse su plakatais', 'Debatai'.</p>
+                </div>
+              </div>
               <textarea id="activities" value={activities} onChange={(e) => setActivities(e.target.value)} placeholder="Pasiūlykite metodų, žaidimų ar kitų veiklų, kurias norėtumėte įtraukti. Pvz., 'Diskusija porose apie metų laikų svarbą', 'Interaktyvi viktorina su Kahoot!'"></textarea>
             </div>
             <div className="form-group">
-              <label htmlFor="generalNotes">Bendros pastabos mokytojui (nebūtina)</label>
+              <div className="label-wrapper">
+                <label htmlFor="generalNotes">Bendros pastabos mokytojui (nebūtina)</label>
+                <div className="tooltip">
+                    <span className="tooltip-icon">ⓘ</span>
+                    <p className="tooltip-text">Vieta Jūsų asmeniniams priminimams: reikalingos priemonės, organizaciniai klausimai ir pan.</p>
+                </div>
+              </div>
               <textarea id="generalNotes" value={generalNotes} onChange={(e) => setGeneralNotes(e.target.value)} placeholder="Įrašykite bet kokius priminimus sau: reikalingos priemonės, organizaciniai klausimai ir kt. Pvz., 'Paruošti 5 lapus su užduotimis grupėms.'"></textarea>
             </div>
             <div className="form-group">
-                <label>Vertinimas ir įsivertinimas (nebūtina)</label>
+                <div className="label-wrapper">
+                    <label>Vertinimas ir įsivertinimas (nebūtina)</label>
+                     <div className="tooltip">
+                        <span className="tooltip-icon">ⓘ</span>
+                        <p className="tooltip-text">Aprašykite, kaip vertinsite mokinius. Pvz., 'Mokiniai vertins vieni kitų darbus', 'Užduoties atlikimas vertinamas kaupiamuoju balu'.</p>
+                    </div>
+                </div>
                 <div className="radio-group">
                     {evaluationOptions.map((option) => (
                         <div key={option} className="radio-option">
@@ -488,6 +541,14 @@ Sugeneruok planą.`;
                       {lessonPlan.eDiaryEntry && (
                           <div className="card ediary-card">
                               <h3>✍️ Siūlomas įrašas el. dienynui</h3>
+                              <div className="copy-all-container">
+                                  <button
+                                      onClick={handleCopyAllDiaryEntries}
+                                      className={`copy-all-button ${isAllCopied ? 'copied' : ''}`}
+                                  >
+                                      {isAllCopied ? 'Viskas nukopijuota!' : 'Kopijuoti viską į el. dienyną'}
+                                  </button>
+                              </div>
                               <div className="diary-entry">
                                   <label>Klasės darbas:</label>
                                   <div className="diary-field">
@@ -559,35 +620,6 @@ Sugeneruok planą.`;
             )}
         </div>
       </main>
-      {isCurriculumModalOpen && (
-        <div className="modal-overlay" onClick={() => setIsCurriculumModalOpen(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close-button" onClick={() => setIsCurriculumModalOpen(false)}>&times;</button>
-            <h2>Bendrosios ugdymo programos</h2>
-            <div className="accordion">
-              {Object.entries(curriculumLinks).map(([category, links]) => (
-                <div className="accordion-item" key={category}>
-                  <button className="accordion-header" onClick={() => toggleAccordion(category)}>
-                    <span>{category}</span>
-                    <span className={`accordion-icon ${openAccordion === category ? 'open' : ''}`}>&#9660;</span>
-                  </button>
-                  {openAccordion === category && (
-                    <div className="accordion-content">
-                      <ul>
-                        {Object.entries(links).map(([subject, url]) => (
-                          <li key={subject}>
-                            <a href={url} target="_blank" rel="noopener noreferrer">{subject}</a>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
        {isExportModalOpen && (
         <div className="modal-overlay" onClick={() => !isExporting && setIsExportModalOpen(false)}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -658,6 +690,15 @@ Sugeneruok planą.`;
                     )}
                 </div>
             </div>
+        </div>
+      )}
+      {selectedTerm && (
+        <div className="modal-overlay" onClick={() => setSelectedTerm(null)}>
+          <div className="modal-content glossary-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close-button" onClick={() => setSelectedTerm(null)}>&times;</button>
+            <h3>{selectedTerm.term}</h3>
+            <p>{selectedTerm.definition}</p>
+          </div>
         </div>
       )}
     </div>

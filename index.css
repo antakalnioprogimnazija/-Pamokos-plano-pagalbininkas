@@ -108,7 +108,6 @@ body {
 .form-group label {
   display: block;
   font-weight: 600;
-  margin-bottom: 0.5rem;
   color: var(--heading-color);
 }
 
@@ -138,6 +137,81 @@ body {
   min-height: 100px;
   resize: vertical;
 }
+
+/* --- Tooltips --- */
+.label-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.label-wrapper label {
+  margin-bottom: 0;
+}
+
+.tooltip {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.tooltip-icon {
+  cursor: help;
+  color: #aaa;
+  font-weight: bold;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 1;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.tooltip:hover .tooltip-icon {
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.tooltip .tooltip-text {
+  visibility: hidden;
+  width: 250px;
+  background-color: var(--heading-color);
+  color: #fff;
+  text-align: left;
+  border-radius: 6px;
+  padding: 10px;
+  position: absolute;
+  z-index: 10;
+  bottom: 150%;
+  right: 0%;
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-weight: 400;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.tooltip .tooltip-text::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  right: 10px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: var(--heading-color) transparent transparent transparent;
+}
+
+.tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
 
 .generate-button {
   width: 100%;
@@ -287,6 +361,35 @@ body {
 }
 
 /* --- E-Diary Entry Card --- */
+.copy-all-container {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.copy-all-button {
+  background-color: var(--secondary-color);
+  color: var(--heading-color);
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.copy-all-button:hover:not(.copied) {
+  background-color: #45c9ac;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.copy-all-button.copied {
+  background-color: var(--success-color);
+  color: white;
+  cursor: default;
+}
+
 .diary-entry {
   margin-bottom: 1rem;
 }
@@ -501,6 +604,21 @@ body {
   border: 1px solid var(--error-color);
 }
 
+/* --- Glossary Feature --- */
+.glossary-term {
+  color: var(--primary-color);
+  font-weight: 600;
+  text-decoration: underline dotted;
+  text-decoration-thickness: 2px;
+  cursor: help;
+  transition: color 0.2s, background-color 0.2s;
+  border-radius: 3px;
+  padding: 0 2px;
+}
+.glossary-term:hover {
+    background-color: rgba(74, 144, 226, 0.1);
+}
+
 /* --- Modal Styles --- */
 .modal-overlay {
   position: fixed;
@@ -686,68 +804,18 @@ body {
   font-weight: 600;
 }
 
-
-/* --- Accordion Styles --- */
-.accordion {
-  border-top: 1px solid var(--border-color);
+/* Glossary Modal Specific Styles */
+.glossary-modal h3 {
+    color: var(--heading-color);
+    margin: 0 0 1rem 0;
+    font-size: 1.5rem;
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 0.5rem;
 }
-
-.accordion-item {
-  border-bottom: 1px solid var(--border-color);
-}
-
-.accordion-header {
-  width: 100%;
-  background-color: transparent;
-  border: none;
-  padding: 1rem;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--heading-color);
-  text-align: left;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-family: var(--font-family);
-}
-
-.accordion-header:hover {
-  background-color: var(--background-color);
-}
-
-.accordion-icon {
-  font-size: 0.8rem;
-  transition: transform 0.3s ease-in-out;
-}
-
-.accordion-icon.open {
-  transform: rotate(180deg);
-}
-
-.accordion-content {
-  padding: 0 1rem 1rem 1rem;
-  background-color: #fcfcfc;
-}
-
-.accordion-content ul {
-  list-style: none;
-  padding-left: 1rem;
-}
-
-.accordion-content li {
-  margin-bottom: 0.5rem;
-}
-
-.accordion-content a {
-  color: var(--primary-color);
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.accordion-content a:hover {
-  color: #3a7ac8;
-  text-decoration: underline;
+.glossary-modal p {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    margin: 0;
 }
 
 /* --- Responsive Design --- */
