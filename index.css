@@ -274,6 +274,11 @@ body {
   color: var(--heading-color);
 }
 
+.general-notes-card {
+  border-left-color: #fdd835; /* Yellowish color */
+  background-color: #fffde7; /* Lighter yellow */
+}
+
 .motivation-card {
   border-left-color: var(--secondary-color);
   background-color: #e8f5e9;
@@ -426,6 +431,26 @@ body {
     cursor: not-allowed;
 }
 
+/* PDF Export Utility Classes */
+.export-hidden {
+  display: none !important;
+}
+
+#lesson-plan-content.export-font-small { font-size: 12px; }
+#lesson-plan-content.export-font-medium { font-size: 14px; }
+#lesson-plan-content.export-font-large { font-size: 16px; }
+
+#lesson-plan-content.export-layout-compact .card {
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+#lesson-plan-content.export-layout-compact .card h3 {
+  margin-bottom: 0.5rem;
+}
+#lesson-plan-content.export-layout-compact .diary-field {
+  padding: 0.4rem 0.8rem;
+}
+
 
 /* --- Loading and Error States --- */
 .loading-overlay {
@@ -540,6 +565,93 @@ body {
   color: #333;
 }
 
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.button-primary, .button-secondary {
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  font-size: 1rem;
+}
+
+.button-primary {
+  background-color: var(--primary-color);
+  color: white;
+}
+.button-primary:hover:not(:disabled) {
+  background-color: #3a7ac8;
+}
+.button-primary:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.button-secondary {
+  background-color: #eef1f4;
+  color: var(--heading-color);
+  border: 1px solid var(--border-color);
+}
+.button-secondary:hover {
+  background-color: #e4e8ec;
+}
+
+/* PDF Settings Modal Styles */
+.pdf-settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.settings-group h4 {
+  color: var(--heading-color);
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.5rem;
+}
+
+.checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.checkbox-option {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+.checkbox-option input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin-right: 0.75rem;
+    cursor: pointer;
+}
+.checkbox-option label {
+    font-weight: 500;
+    color: var(--text-color);
+    flex-grow: 1;
+}
+
+.settings-select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-family: var(--font-family);
+  font-size: 1rem;
+  background-color: #fff;
+}
+
+
 /* --- Accordion Styles --- */
 .accordion {
   border-top: 1px solid var(--border-color);
@@ -625,5 +737,8 @@ body {
   }
   .modal-content {
     padding: 2rem 1.5rem 1.5rem;
+  }
+  .checkbox-grid {
+    grid-template-columns: 1fr;
   }
 }
