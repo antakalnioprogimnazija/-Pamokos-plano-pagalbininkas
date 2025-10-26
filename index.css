@@ -565,6 +565,11 @@ body {
   color: #333;
 }
 
+.modal-close-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
 .modal-actions {
   display: flex;
   justify-content: flex-end;
@@ -649,6 +654,36 @@ body {
   font-family: var(--font-family);
   font-size: 1rem;
   background-color: #fff;
+}
+
+.modal-error {
+  margin-top: 1rem;
+  margin-bottom: 0;
+}
+
+.modal-actions .export-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0.6rem 0;
+  font-weight: 600;
+  min-height: 42.4px; /* Match button height */
+}
+
+.modal-actions .spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid var(--border-color);
+  border-top-color: var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 10px 0 0;
+}
+
+.modal-actions .export-status.success {
+  color: #2e7d32;
+  font-weight: 600;
 }
 
 

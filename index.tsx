@@ -81,11 +81,13 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
-  const [isExporting, setIsExporting] = useState(false);
   const [isCurriculumModalOpen, setIsCurriculumModalOpen] = useState(false);
   const [openAccordion, setOpenAccordion] = useState<string | null>(null);
 
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const [exportSuccess, setExportSuccess] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
   const [pdfSettings, setPdfSettings] = useState({
     includeGeneralNotes: true,
     includeLessonOverview: true,
@@ -227,12 +229,19 @@ Sugeneruok planą.`;
     }
   };
 
+  const openExportModal = () => {
+    setExportSuccess(false);
+    setExportError(null);
+    setIsExportModalOpen(true);
+  };
+
   const handleExportPDF = async () => {
     const input = document.getElementById('lesson-plan-content');
     if (!input || !lessonPlan) return;
 
     setIsExporting(true);
-    setIsExportModalOpen(false);
+    setExportSuccess(false);
+    setExportError(null);
 
     const sectionSelectors = {
         includeGeneralNotes: '.general-notes-card',
@@ -296,10 +305,15 @@ Sugeneruok planą.`;
 
         const cleanTopic = lessonPlan.lessonOverview.topic.toLowerCase().replace(/[^a-z0-9ąčęėįšųūž]+/g, ' ').trim().replace(/\s+/g, '-');
         pdf.save(`pamokos-planas-${cleanTopic}.pdf`);
+        
+        setExportSuccess(true);
+        setTimeout(() => {
+            setIsExportModalOpen(false);
+        }, 2000);
 
     } catch (error) {
         console.error("Klaida eksportuojant PDF:", error);
-        setError("Nepavyko eksportuoti PDF. Bandykite dar kartą.");
+        setExportError("Nepavyko eksportuoti PDF. Bandykite dar kartą.");
     } finally {
         // Cleanup: remove temporary classes and restore visibility
         const fontClass = `export-font-${pdfSettings.fontSize}`;
@@ -440,7 +454,7 @@ Sugeneruok planą.`;
             {lessonPlan && (
                 <>
                   <div className="export-container">
-                      <button onClick={() => setIsExportModalOpen(true)} disabled={isExporting} className="export-button">
+                      <button onClick={openExportModal} disabled={isExporting} className="export-button">
                           {isExporting ? 'Eksportuojama...' : 'Eksportuoti į PDF 📄'}
                       </button>
                   </div>
@@ -575,9 +589,9 @@ Sugeneruok planą.`;
         </div>
       )}
        {isExportModalOpen && (
-        <div className="modal-overlay" onClick={() => setIsExportModalOpen(false)}>
+        <div className="modal-overlay" onClick={() => !isExporting && setIsExportModalOpen(false)}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                <button className="modal-close-button" onClick={() => setIsExportModalOpen(false)}>&times;</button>
+                <button className="modal-close-button" onClick={() => setIsExportModalOpen(false)} disabled={isExporting}>&times;</button>
                 <h2>PDF eksportavimo nustatymai</h2>
                 <div className="pdf-settings-form">
                     <div className="settings-group">
@@ -625,11 +639,23 @@ Sugeneruok planą.`;
                         </div>
                     </div>
                 </div>
+                {exportError && <div className="error-message modal-error">{exportError}</div>}
                 <div className="modal-actions">
-                    <button onClick={() => setIsExportModalOpen(false)} className="button-secondary">Atšaukti</button>
-                    <button onClick={handleExportPDF} className="button-primary" disabled={isExporting}>
-                        {isExporting ? 'Eksportuojama...' : 'Eksportuoti'}
-                    </button>
+                    {isExporting ? (
+                        <div className="export-status">
+                            <div className="spinner"></div>
+                            <span>Generuojamas PDF, prašome palaukti...</span>
+                        </div>
+                    ) : exportSuccess ? (
+                        <div className="export-status success">
+                            <span>✅ PDF sėkmingai sugeneruotas! Atsisiuntimas prasidės netrukus.</span>
+                        </div>
+                    ) : (
+                        <>
+                            <button onClick={() => setIsExportModalOpen(false)} className="button-secondary">Atšaukti</button>
+                            <button onClick={handleExportPDF} className="button-primary">Eksportuoti</button>
+                        </>
+                    )}
                 </div>
             </div>
         </div>
