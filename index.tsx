@@ -34,30 +34,6 @@ interface LessonPlan {
   motivation: string;
 }
 
-const templates = [
-  {
-    label: 'Trupmenų įvadas',
-    subject: 'Matematika',
-    topic: 'Trupmenų įvadas',
-    goal: 'Supažindinti mokinius su trupmenų sąvoka, išmokyti atpažinti skaitiklį ir vardiklį bei vaizduoti paprastąsias trupmenas.',
-    activities: 'Picos dalinimo žaidimas, trupmenų kortelių dėliojimas, interaktyvi užduotis internete.'
-  },
-  {
-    label: 'Fotosintezės pagrindai',
-    subject: 'Gamtos mokslai / Biologija',
-    topic: 'Fotosintezės pagrindai',
-    goal: 'Paaiškinti fotosintezės procesą, jo svarbą augalams ir visai gyvybei. Mokiniai turėtų gebėti nurodyti pagrindinius fotosintezės komponentus (saulės šviesa, vanduo, anglies dioksidas) ir produktus (deguonis, gliukozė).',
-    activities: 'Augalo lapo stebėjimas per mikroskopą, schema "fotosintezės kelias", eksperimentas su vandens augalu, išskiriančiu deguonį.'
-  },
-  {
-    label: 'Vandens ciklas gamtoje',
-    subject: 'Pasaulio pažinimas / Geografija',
-    topic: 'Vandens ciklas gamtoje',
-    goal: 'Supažindinti mokinius su pagrindiniais vandens ciklo etapais: garavimu, kondensacija, krituliais ir surinkimu. Mokiniai turėtų suprasti, kaip vanduo keliauja gamtoje.',
-    activities: 'Sukurti vandens ciklo modelį stiklainyje, piešti plakatą, žiūrėti edukacinį filmuką.'
-  }
-];
-
 const curriculumLinks = {
   'Pradinis ugdymas (1-4 kl.)': {
     'Lietuvių kalba ir literatūra': 'https://emokykla.lt/bendrosios-programos/bendroji-programa/2-lietuviu-kalba-ir-literatura-pradinio-ugdymo-bendroji-programa/',
@@ -291,18 +267,6 @@ Sugeneruok planą.`;
   };
 
   const evaluationOptions = ['Formuojamasis', 'Kaupiamasis', 'Diagnostinis', 'Tarpusavio vertinimas', 'Kitas'];
-
-  const handleTemplateSelect = (template: typeof templates[0]) => {
-    setSubject(template.subject);
-    setTopic(template.topic);
-    setGoal(template.goal);
-    setActivities(template.activities);
-
-    const gradeInput = document.getElementById('grade');
-    if (gradeInput) {
-      gradeInput.focus();
-    }
-  };
   
   const toggleAccordion = (category: string) => {
     setOpenAccordion(openAccordion === category ? null : category);
@@ -332,21 +296,6 @@ Sugeneruok planą.`;
       </header>
       <main className="main-content">
         <div className="form-container">
-          <div className="templates-container">
-            <h3>Pasirinkite iš šablonų</h3>
-            <div className="templates-grid">
-              {templates.map(template => (
-                <button
-                  key={template.label}
-                  type="button"
-                  className="template-button"
-                  onClick={() => handleTemplateSelect(template)}
-                >
-                  {template.label}
-                </button>
-              ))}
-            </div>
-          </div>
           <h2>Pamokos informacija</h2>
           <form onSubmit={handleInitialSubmit}>
             <div className="form-group">

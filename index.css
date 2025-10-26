@@ -95,47 +95,6 @@ body {
   height: fit-content;
 }
 
-.templates-container {
-  margin-bottom: 2rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.templates-container h3 {
-  color: var(--heading-color);
-  font-size: 1.2rem;
-  margin-bottom: 1rem;
-  text-align: center;
-}
-
-.templates-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 0.75rem;
-}
-
-.template-button {
-  padding: 0.75rem 0.5rem;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  background-color: #f9fbfb;
-  color: var(--primary-color);
-  font-family: var(--font-family);
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  text-align: center;
-  transition: all 0.2s ease-in-out;
-}
-
-.template-button:hover {
-  background-color: var(--primary-color);
-  color: white;
-  border-color: var(--primary-color);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
 .form-container h2 {
   color: var(--heading-color);
   margin-bottom: 1.5rem;
