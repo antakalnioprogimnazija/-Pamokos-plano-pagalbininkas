@@ -357,31 +357,31 @@ Sugeneruok planą.`;
           <h2>Pamokos informacija</h2>
           <form onSubmit={handleInitialSubmit}>
             <div className="form-group">
-              <label htmlFor="grade">Klasė <span className="required">*</span></label>
-              <input type="text" id="grade" value={grade} onChange={(e) => setGrade(e.target.value)} placeholder="pvz., 5 klasė" required />
+              <label htmlFor="grade">Klasė / Grupė <span className="required">*</span></label>
+              <input type="text" id="grade" value={grade} onChange={(e) => setGrade(e.target.value)} placeholder="pvz., 5b klasė, 'Varpelių' grupė" required />
             </div>
             <div className="form-group">
               <label htmlFor="subject">Dalykas <span className="required">*</span></label>
-              <input type="text" id="subject" value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="pvz., matematika" required/>
+              <input type="text" id="subject" value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="pvz., Matematika, Pasaulio pažinimas" required/>
             </div>
             <div className="form-group">
               <label htmlFor="topic">Pamokos tema <span className="required">*</span></label>
-              <input type="text" id="topic" value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="pvz., trupmenų sudėtis" required/>
+              <input type="text" id="topic" value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="pvz., Trupmenų sudėtis, K. Donelaičio 'Metai'" required/>
             </div>
             <div className="form-group">
-              <label htmlFor="goal">Pamokos tikslas (nebūtina)</label>
-              <textarea id="goal" value={goal} onChange={(e) => setGoal(e.target.value)} placeholder="pvz., išmokyti mokinius sudėti trupmenas su vienodais vardikliais"></textarea>
+              <label htmlFor="goal">Pamokos tikslas ir uždaviniai (nebūtina)</label>
+              <textarea id="goal" value={goal} onChange={(e) => setGoal(e.target.value)} placeholder="Aprašykite, ką mokiniai turėtų žinoti, suprasti ar gebėti padaryti po šios pamokos. Pvz., 'Mokiniai gebės atpažinti ir įvardinti pagrindines K. Donelaičio poemos 'Metai' temas.'"></textarea>
             </div>
             <div className="form-group">
-              <label htmlFor="activities">Jūsų idėjos ar veiklos (nebūtina)</label>
-              <textarea id="activities" value={activities} onChange={(e) => setActivities(e.target.value)} placeholder="pvz., darbas grupėse, interaktyvi užduotis su programėle"></textarea>
+              <label htmlFor="activities">Papildomos idėjos ar veiklos (nebūtina)</label>
+              <textarea id="activities" value={activities} onChange={(e) => setActivities(e.target.value)} placeholder="Pasiūlykite metodų, žaidimų ar kitų veiklų, kurias norėtumėte įtraukti. Pvz., 'Diskusija porose apie metų laikų svarbą', 'Interaktyvi viktorina su Kahoot!'"></textarea>
             </div>
             <div className="form-group">
-              <label htmlFor="generalNotes">Bendros pastabos (nebūtina)</label>
-              <textarea id="generalNotes" value={generalNotes} onChange={(e) => setGeneralNotes(e.target.value)} placeholder="pvz., nepamiršti patikrinti mokinių sąsiuvinių, paruošti interaktyvią lentą..."></textarea>
+              <label htmlFor="generalNotes">Bendros pastabos mokytojui (nebūtina)</label>
+              <textarea id="generalNotes" value={generalNotes} onChange={(e) => setGeneralNotes(e.target.value)} placeholder="Įrašykite bet kokius priminimus sau: reikalingos priemonės, organizaciniai klausimai ir kt. Pvz., 'Paruošti 5 lapus su užduotimis grupėms.'"></textarea>
             </div>
             <div className="form-group">
-                <label>Vertinimas (nebūtina)</label>
+                <label>Vertinimas ir įsivertinimas (nebūtina)</label>
                 <div className="radio-group">
                     {evaluationOptions.map((option) => (
                         <div key={option} className="radio-option">
@@ -413,7 +413,7 @@ Sugeneruok planą.`;
                     id="evaluation"
                     value={evaluationDescription}
                     onChange={(e) => setEvaluationDescription(e.target.value)}
-                    placeholder="Aprašykite, kaip ir už ką mokiniai bus vertinami..."
+                    placeholder="Nurodykite vertinimo kriterijus ar būdus. Pvz., 'Už teisingai atliktus 3 iš 5 pratimo veiksmus mokinys gaus kaupiamąjį tašką.' arba 'Mokiniai stebės vieni kitų pristatymus ir pateiks grįžtamąjį ryšį pagal pateiktus kriterijus.'"
                     style={{ marginTop: '0.75rem' }}
                 ></textarea>
             </div>
@@ -532,7 +532,7 @@ Sugeneruok planą.`;
                                   type="text" 
                                   value={refinement}
                                   onChange={(e) => setRefinement(e.target.value)}
-                                  placeholder="pvz., padaryk veiklas labiau žaismingas" 
+                                  placeholder="pvz., 'Sutrumpink namų darbus', 'Pridėk daugiau kūrybinių užduočių'" 
                                   disabled={isLoading}
                               />
                               <button type="submit" disabled={isLoading}>
