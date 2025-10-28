@@ -505,15 +505,101 @@ body {
     cursor: not-allowed;
 }
 
-/* --- PDF Export --- */
-.export-container {
-    margin-bottom: 1.5rem;
-    text-align: right;
+/* --- Saved Plans --- */
+.saved-plans-container {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
 }
 
+.saved-plans-container h3 {
+  color: var(--heading-color);
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.no-saved-plans {
+  text-align: center;
+  color: #777;
+  font-style: italic;
+  padding: 1rem 0;
+}
+
+.saved-plans-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 30vh;
+  overflow-y: auto;
+  padding-right: 5px; /* for scrollbar */
+}
+
+.saved-plans-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  background-color: var(--background-color);
+  transition: background-color 0.2s, box-shadow 0.2s;
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+}
+
+.saved-plans-list li:hover {
+  background-color: #e9f3fe;
+}
+
+.saved-plans-list li.active {
+  background-color: #ddebf8;
+  border-left: 4px solid var(--primary-color);
+  font-weight: 600;
+  padding-left: calc(0.75rem - 3px);
+}
+
+.plan-title {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  margin-right: 1rem;
+}
+
+.plan-title small {
+  font-weight: 400;
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 2px;
+}
+
+.delete-button {
+  background: none;
+  border: none;
+  color: #999;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: color 0.2s;
+  padding: 0 0.25rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.delete-button:hover {
+  color: var(--error-color);
+}
+
+/* --- Save/Export Actions --- */
+.export-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.save-button,
 .export-button {
     padding: 0.6rem 1.2rem;
-    background-color: var(--primary-color);
     color: white;
     border: none;
     border-radius: 8px;
@@ -522,6 +608,22 @@ body {
     transition: all 0.3s ease;
     font-size: 0.9rem;
 }
+
+.export-button {
+    background-color: var(--primary-color);
+}
+
+.save-button {
+  background-color: var(--secondary-color);
+  color: var(--heading-color);
+}
+
+.save-button:hover:not(:disabled) {
+  background-color: #45c9ac;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
 
 .export-button:hover:not(:disabled) {
     background-color: #3a7ac8;
@@ -539,9 +641,9 @@ body {
   display: none !important;
 }
 
-#lesson-plan-content.export-font-small { font-size: 12px; }
-#lesson-plan-content.export-font-medium { font-size: 14px; }
-#lesson-plan-content.export-font-large { font-size: 16px; }
+.card.export-font-small { font-size: 12px; }
+.card.export-font-medium { font-size: 14px; }
+.card.export-font-large { font-size: 16px; }
 
 #lesson-plan-content.export-layout-compact .card {
   padding: 1rem;
@@ -741,10 +843,17 @@ body {
   padding-bottom: 0.5rem;
 }
 
-.checkbox-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+.section-settings-list {
+  display: flex;
+  flex-direction: column;
   gap: 0.75rem;
+}
+
+.pdf-section-setting {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.25rem 0;
 }
 
 .checkbox-option {
@@ -764,14 +873,19 @@ body {
     flex-grow: 1;
 }
 
-.settings-select {
-  width: 100%;
-  padding: 0.75rem;
+.settings-select-small {
+  padding: 0.4rem 0.6rem;
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: 6px;
   font-family: var(--font-family);
-  font-size: 1rem;
+  font-size: 0.9rem;
   background-color: #fff;
+  width: 120px; /* fixed width for alignment */
+}
+.settings-select-small:disabled {
+  background-color: #f4f7f6;
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
 .modal-error {
@@ -818,6 +932,60 @@ body {
     margin: 0;
 }
 
+/* --- Onboarding Tutorial Styles --- */
+.onboarding-modal {
+  padding: 2rem;
+  text-align: center;
+}
+
+.onboarding-step-content {
+  margin-bottom: 2rem;
+  min-height: 120px;
+}
+.onboarding-step-content h3 {
+  color: var(--heading-color);
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+}
+.onboarding-step-content p {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: var(--text-color);
+}
+
+.onboarding-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--border-color);
+  transition: background-color 0.3s;
+}
+
+.dot.active {
+  background-color: var(--primary-color);
+}
+
+.onboarding-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.onboarding-nav > div {
+  display: flex;
+  gap: 0.75rem;
+}
+
+
 /* --- Responsive Design --- */
 @media (max-width: 992px) {
   .main-content {
@@ -841,7 +1009,12 @@ body {
   .modal-content {
     padding: 2rem 1.5rem 1.5rem;
   }
-  .checkbox-grid {
-    grid-template-columns: 1fr;
+  .pdf-section-setting {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  .settings-select-small {
+    width: 100%;
   }
 }

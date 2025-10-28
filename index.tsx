@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { GoogleGenAI, Chat } from '@google/genai';
 import jsPDF from 'jspdf';
@@ -34,6 +34,14 @@ interface LessonPlan {
   eDiaryEntry: EDiaryEntry;
   motivation: string;
 }
+
+interface SavedPlan {
+  id: string;
+  title: string;
+  plan: LessonPlan;
+  createdAt: string;
+}
+
 
 const glossaryData: { [key: string]: string } = {
   'Diferencijuotos': 'Tai mokymo strategija, kai mokytojas pritaiko ugdymo turinį, procesą, aplinką ir vertinimą, atsižvelgdamas į skirtingus mokinių mokymosi poreikius, gebėjimus ir interesus.',
@@ -76,14 +84,54 @@ const App = () => {
     includeHomework: true,
     includeEDiaryEntry: true,
     includeMotivation: true,
-    fontSize: 'medium',
+    fontSizes: {
+      generalNotes: 'medium',
+      lessonOverview: 'medium',
+      lessonActivities: 'medium',
+      homework: 'medium',
+      eDiaryEntry: 'medium',
+      motivation: 'small',
+    },
     isCompactLayout: false,
   });
   
   const [selectedTerm, setSelectedTerm] = useState<{ term: string; definition: string; } | null>(null);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [onboardingStep, setOnboardingStep] = useState(0);
+  
+  const [savedPlans, setSavedPlans] = useState<SavedPlan[]>([]);
+  const [activePlanId, setActivePlanId] = useState<string | null>(null);
 
 
   const chatRef = useRef<Chat | null>(null);
+  
+  useEffect(() => {
+    // Load onboarding status from local storage
+    const onboardingComplete = localStorage.getItem('onboardingComplete');
+    if (!onboardingComplete) {
+      setShowOnboarding(true);
+    }
+    
+    // Load saved plans from local storage
+    try {
+      const storedPlans = localStorage.getItem('savedLessonPlans');
+      if (storedPlans) {
+        setSavedPlans(JSON.parse(storedPlans));
+      }
+    } catch (error) {
+      console.error("Nepavyko įkelti planų iš vietinės saugyklos:", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Save plans to local storage whenever they change
+    try {
+      localStorage.setItem('savedLessonPlans', JSON.stringify(savedPlans));
+    } catch (error) {
+      console.error("Nepavyko išsaugoti planų vietinėje saugykloje:", error);
+    }
+  }, [savedPlans]);
+
 
   const systemInstruction = `Tu esi ekspertas pedagogas ir pamokų planavimo asistentas, puikiai išmanantis Lietuvos bendrąsias ugdymo programas (pasiekiamas https://emokykla.lt/bendrosios-programos/visos-bendrosios-programos). Tavo tikslas - padėti mokytojams kurti išsamius, strukturuotus ir diferencijuotus pamokų planus. Visada atsakyk lietuvių kalba.
 Tavo atsakas privalo būti JSON formatu, griežtai laikantis šios struktūros:
@@ -149,6 +197,7 @@ Nesvarbu, koks vartotojo prašymas, tavo atsakas privalo būti tik šis JSON obj
 
           const parsedPlan: LessonPlan = JSON.parse(jsonString);
           setLessonPlan(parsedPlan);
+          setActivePlanId(null); // Mark as new, unsaved plan
       } catch (e: any) {
           console.error(e);
           setError(`Atsiprašome, įvyko klaida generuojant planą. Pabandykite dar kartą. Klaidos detalės: ${e.message}`);
@@ -217,14 +266,24 @@ Sugeneruok planą.`;
     });
   };
 
-  const handlePdfSettingsChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value, type } = e.target;
-    if (type === 'checkbox') {
-        const { checked } = e.target as HTMLInputElement;
-        setPdfSettings(prev => ({ ...prev, [name]: checked }));
-    } else {
-        setPdfSettings(prev => ({ ...prev, [name]: value }));
-    }
+  const handlePdfSettingsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, checked } = e.target;
+    setPdfSettings(prev => ({ ...prev, [name]: checked }));
+  };
+  
+  const handleFontSizeChange = (section: keyof typeof pdfSettings.fontSizes, value: string) => {
+    setPdfSettings(prev => ({
+      ...prev,
+      fontSizes: {
+        ...prev.fontSizes,
+        [section]: value,
+      },
+    }));
+  };
+
+  const handleCompactLayoutChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { checked } = e.target;
+    setPdfSettings(prev => ({ ...prev, isCompactLayout: checked }));
   };
 
   const openExportModal = () => {
@@ -241,7 +300,15 @@ Sugeneruok planą.`;
     setExportSuccess(false);
     setExportError(null);
 
-    // Get all cards to be exported based on settings
+    const sectionMap: { [key: string]: keyof typeof pdfSettings.fontSizes } = {
+        'general-notes-card': 'generalNotes',
+        'lesson-overview-card': 'lessonOverview',
+        'lesson-activities-card': 'lessonActivities',
+        'homework-card': 'homework',
+        'ediary-card': 'eDiaryEntry',
+        'motivation-card': 'motivation'
+    };
+    
     const cards = Array.from(contentContainer.querySelectorAll('.card'));
     const visibleCards = cards.filter(card => {
         if (card.classList.contains('general-notes-card') && !pdfSettings.includeGeneralNotes) return false;
@@ -255,13 +322,9 @@ Sugeneruok planą.`;
 
     const hiddenElements: HTMLElement[] = [];
     try {
-        // Apply temporary global styles for export
-        const fontClass = `export-font-${pdfSettings.fontSize}`;
         const layoutClass = pdfSettings.isCompactLayout ? 'export-layout-compact' : '';
-        if (fontClass) contentContainer.classList.add(fontClass);
         if (layoutClass) contentContainer.classList.add(layoutClass);
 
-        // Hide UI elements globally before rendering
         const uiElementsToHide = contentContainer.querySelectorAll('.copy-button, .copy-all-button, .refinement-container, .glossary-term');
         uiElementsToHide.forEach(el => {
             const htmlEl = el as HTMLElement;
@@ -269,31 +332,42 @@ Sugeneruok planą.`;
             hiddenElements.push(htmlEl);
         });
 
-        // PDF setup
         const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
         const pdfWidth = pdf.internal.pageSize.getWidth();
         const pageHeight = pdf.internal.pageSize.getHeight();
-        const margin = 15; // 15mm margin
+        const margin = 15;
         const contentWidth = pdfWidth - margin * 2;
         let yPos = margin;
         
         for (let i = 0; i < visibleCards.length; i++) {
             const card = visibleCards[i];
+            const sectionClass = Object.keys(sectionMap).find(c => card.classList.contains(c));
+            const sectionKey = sectionClass ? sectionMap[sectionClass] : null;
+            
+            let fontClass = '';
+            if (sectionKey) {
+              const fontSize = pdfSettings.fontSizes[sectionKey];
+              fontClass = `export-font-${fontSize}`;
+              card.classList.add(fontClass);
+            }
+
             const canvas = await html2canvas(card, { scale: 2 });
+            
+            if (fontClass) {
+              card.classList.remove(fontClass);
+            }
+
             const imgData = canvas.toDataURL('image/png');
             const imgProps = pdf.getImageProperties(imgData);
-
-            // Calculate image height to fit content width
             const imgHeight = (imgProps.height * contentWidth) / imgProps.width;
 
-            // Check if it fits on the current page
             if (yPos + imgHeight > pageHeight - margin && yPos > margin) {
                 pdf.addPage();
-                yPos = margin; // Reset position for new page
+                yPos = margin;
             }
 
             pdf.addImage(imgData, 'PNG', margin, yPos, contentWidth, imgHeight);
-            yPos += imgHeight + 5; // Add image height and a 5mm gap between cards
+            yPos += imgHeight + 5;
         }
         
         const cleanTopic = lessonPlan.lessonOverview.topic.toLowerCase().replace(/[^a-z0-9ąčęėįšųūž]+/g, ' ').trim().replace(/\s+/g, '-');
@@ -308,13 +382,44 @@ Sugeneruok planą.`;
         console.error("Klaida eksportuojant PDF:", error);
         setExportError("Nepavyko eksportuoti PDF. Bandykite dar kartą.");
     } finally {
-        // Cleanup
-        const fontClass = `export-font-${pdfSettings.fontSize}`;
         const layoutClass = pdfSettings.isCompactLayout ? 'export-layout-compact' : '';
-        if (fontClass) contentContainer.classList.remove(fontClass);
         if (layoutClass) contentContainer.classList.remove(layoutClass);
         hiddenElements.forEach(el => (el.style.visibility = 'visible'));
         setIsExporting(false);
+    }
+  };
+
+  const handleSavePlan = () => {
+    if (!lessonPlan) return;
+    const topic = lessonPlan.lessonOverview.topic || 'Neįvardinta tema';
+    const date = new Date().toLocaleDateString('lt-LT', { day: '2-digit', month: '2-digit' });
+    const title = `${topic} (${date})`;
+    const newPlan: SavedPlan = {
+      id: `plan-${Date.now()}`,
+      title,
+      plan: lessonPlan,
+      createdAt: new Date().toISOString(),
+    };
+    setSavedPlans(prevPlans => [newPlan, ...prevPlans]);
+    setActivePlanId(newPlan.id);
+  };
+
+  const handleLoadPlan = (planId: string) => {
+    const planToLoad = savedPlans.find(p => p.id === planId);
+    if (planToLoad) {
+      setLessonPlan(planToLoad.plan);
+      setActivePlanId(planToLoad.id);
+    }
+  };
+
+  const handleDeletePlan = (planId: string) => {
+    if (window.confirm('Ar tikrai norite ištrinti šį planą?')) {
+      const updatedPlans = savedPlans.filter(p => p.id !== planId);
+      setSavedPlans(updatedPlans);
+      if (activePlanId === planId) {
+        setLessonPlan(null);
+        setActivePlanId(null);
+      }
     }
   };
 
@@ -359,14 +464,61 @@ Sugeneruok planą.`;
     ));
   };
 
+  const closeOnboarding = () => {
+    setShowOnboarding(false);
+    localStorage.setItem('onboardingComplete', 'true');
+  };
+
   const evaluationOptions = ['Formuojamasis', 'Kaupiamasis', 'Diagnostinis', 'Tarpusavio vertinimas', 'Kitas'];
   
+  const pdfSections: {key: keyof typeof pdfSettings.fontSizes, includeKey: keyof typeof pdfSettings, label: string}[] = [
+    { key: 'generalNotes', includeKey: 'includeGeneralNotes', label: 'Bendros pastabos' },
+    { key: 'lessonOverview', includeKey: 'includeLessonOverview', label: 'Pamokos apžvalga' },
+    { key: 'lessonActivities', includeKey: 'includeLessonActivities', label: 'Pamokos veiklos' },
+    { key: 'homework', includeKey: 'includeHomework', label: 'Namų darbai' },
+    { key: 'eDiaryEntry', includeKey: 'includeEDiaryEntry', label: 'El. dienyno įrašas' },
+    { key: 'motivation', includeKey: 'includeMotivation', label: 'Motyvacija' },
+  ];
+
+  const onboardingSteps = [
+    {
+      title: 'Sveiki atvykę į Pamokos plano pagalbininką!',
+      content: 'Šis trumpas gidas padės jums susipažinti su pagrindinėmis programėlės funkcijomis. Pradėkime!'
+    },
+    {
+      title: '1. Užpildykite informaciją',
+      content: "Kairėje pusėje esančioje formoje įveskite pagrindinius pamokos duomenis: klasę, dalyką ir temą. Kuo detalesnę informaciją pateiksite, tuo tikslesnis bus sugeneruotas planas."
+    },
+    {
+      title: '2. Sugeneruokite planą',
+      content: "Užpildę formą, paspauskite mygtuką 'Pateikti pamokos aprašą'. Mūsų dirbtinio intelekto asistentas per kelias akimirkas sukurs išsamų pamokos planą."
+    },
+    {
+      title: '3. Peržiūrėkite ir tikslinkite',
+      content: "Dešinėje atsiras jūsų planas, suskirstytas į patogias skiltis. Jei norite ką nors pakeisti, apačioje esančiame laukelyje įrašykite savo pageidavimą (pvz., 'pridėk žaidimą') ir atnaujinkite planą."
+    },
+    {
+      title: '4. Kopijuokite, išsaugokite ir eksportuokite',
+      content: "Patogiai kopijuokite dienyno įrašus, išsaugokite planą vėlesniam naudojimui, o kai jis bus tobulas, paspauskite 'Eksportuoti į PDF' ir pritaikykite dokumento išvaizdą."
+    },
+    {
+      title: 'Viskas paruošta!',
+      content: 'Dabar esate pasiruošę kurti nuostabias pamokas. Sėkmės!'
+    }
+  ];
+
   return (
     <div className="container">
       <header className="header">
         <h1>Pamokos plano pagalbininkas ✏️</h1>
         <p>Jūsų pagalbininkas kūrybiškoms ir efektyvioms pamokoms</p>
         <div className="header-buttons">
+            <button
+                onClick={() => { setOnboardingStep(0); setShowOnboarding(true); }}
+                className="external-link-button"
+            >
+              Kaip naudotis?
+            </button>
             <a 
               href="https://emokykla.lt/bendrosios-programos/visos-bendrosios-programos" 
               target="_blank" 
@@ -489,6 +641,24 @@ Sugeneruok planą.`;
               Pateikti pamokos aprašą
             </button>
           </form>
+          <div className="saved-plans-container">
+            <h3>Išsaugoti planai</h3>
+            {savedPlans.length > 0 ? (
+              <ul className="saved-plans-list">
+                {savedPlans.map(plan => (
+                  <li key={plan.id} className={plan.id === activePlanId ? 'active' : ''} onClick={() => handleLoadPlan(plan.id)}>
+                    <span className="plan-title">
+                      {plan.title}
+                      <small>{new Date(plan.createdAt).toLocaleDateString('lt-LT')}</small>
+                    </span>
+                    <button onClick={(e) => { e.stopPropagation(); handleDeletePlan(plan.id); }} className="delete-button" aria-label="Ištrinti planą">✖</button>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="no-saved-plans">Išsaugotų planų nėra.</p>
+            )}
+          </div>
         </div>
         <div className="results-container">
             {isLoading && !lessonPlan && (
@@ -507,6 +677,11 @@ Sugeneruok planą.`;
             {lessonPlan && (
                 <>
                   <div className="export-container">
+                      {activePlanId === null && lessonPlan && (
+                        <button onClick={handleSavePlan} className="save-button">
+                            Išsaugoti planą 💾
+                        </button>
+                      )}
                       <button onClick={openExportModal} disabled={isExporting} className="export-button">
                           {isExporting ? 'Eksportuojama...' : 'Eksportuoti į PDF 📄'}
                       </button>
@@ -627,46 +802,39 @@ Sugeneruok planą.`;
                 <h2>PDF eksportavimo nustatymai</h2>
                 <div className="pdf-settings-form">
                     <div className="settings-group">
-                        <h4>Įtraukti skiltis</h4>
-                        <div className="checkbox-grid">
-                            <div className="checkbox-option">
-                                <input type="checkbox" id="includeGeneralNotes" name="includeGeneralNotes" checked={pdfSettings.includeGeneralNotes} onChange={handlePdfSettingsChange} />
-                                <label htmlFor="includeGeneralNotes">Bendros pastabos</label>
+                        <h4>Įtraukti skiltis ir šrifto dydžiai</h4>
+                        <div className="section-settings-list">
+                          {pdfSections.map((section) => (
+                            <div key={section.key as string} className="pdf-section-setting">
+                              <div className="checkbox-option">
+                                  <input 
+                                      type="checkbox"
+                                      id={`include-${section.key as string}`} 
+                                      name={section.includeKey as string} 
+                                      checked={pdfSettings[section.includeKey as keyof typeof pdfSettings] as boolean} 
+                                      onChange={handlePdfSettingsChange} 
+                                  />
+                                  <label htmlFor={`include-${section.key as string}`}>{section.label}</label>
+                              </div>
+                              <select 
+                                  name={`fontSize-${section.key as string}`}
+                                  value={pdfSettings.fontSizes[section.key]} 
+                                  onChange={(e) => handleFontSizeChange(section.key, e.target.value)}
+                                  className="settings-select-small"
+                                  disabled={!(pdfSettings[section.includeKey as keyof typeof pdfSettings] as boolean)}
+                              >
+                                  <option value="small">Mažas</option>
+                                  <option value="medium">Vidutinis</option>
+                                  <option value="large">Didelis</option>
+                              </select>
                             </div>
-                            <div className="checkbox-option">
-                                <input type="checkbox" id="includeLessonOverview" name="includeLessonOverview" checked={pdfSettings.includeLessonOverview} onChange={handlePdfSettingsChange} />
-                                <label htmlFor="includeLessonOverview">Pamokos apžvalga</label>
-                            </div>
-                            <div className="checkbox-option">
-                                <input type="checkbox" id="includeLessonActivities" name="includeLessonActivities" checked={pdfSettings.includeLessonActivities} onChange={handlePdfSettingsChange} />
-                                <label htmlFor="includeLessonActivities">Pamokos veiklos</label>
-                            </div>
-                            <div className="checkbox-option">
-                                <input type="checkbox" id="includeHomework" name="includeHomework" checked={pdfSettings.includeHomework} onChange={handlePdfSettingsChange} />
-                                <label htmlFor="includeHomework">Namų darbai</label>
-                            </div>
-                            <div className="checkbox-option">
-                                <input type="checkbox" id="includeEDiaryEntry" name="includeEDiaryEntry" checked={pdfSettings.includeEDiaryEntry} onChange={handlePdfSettingsChange} />
-                                <label htmlFor="includeEDiaryEntry">El. dienyno įrašas</label>
-                            </div>
-                             <div className="checkbox-option">
-                                <input type="checkbox" id="includeMotivation" name="includeMotivation" checked={pdfSettings.includeMotivation} onChange={handlePdfSettingsChange} />
-                                <label htmlFor="includeMotivation">Motyvacija</label>
-                            </div>
+                          ))}
                         </div>
                     </div>
                     <div className="settings-group">
-                        <h4>Išvaizda</h4>
-                        <div className="form-group">
-                          <label htmlFor="fontSize">Šrifto dydis</label>
-                          <select id="fontSize" name="fontSize" value={pdfSettings.fontSize} onChange={handlePdfSettingsChange} className="settings-select">
-                              <option value="small">Mažas</option>
-                              <option value="medium">Vidutinis</option>
-                              <option value="large">Didelis</option>
-                          </select>
-                        </div>
+                        <h4>Išdėstymas</h4>
                         <div className="checkbox-option">
-                           <input type="checkbox" id="isCompactLayout" name="isCompactLayout" checked={pdfSettings.isCompactLayout} onChange={handlePdfSettingsChange} />
+                           <input type="checkbox" id="isCompactLayout" name="isCompactLayout" checked={pdfSettings.isCompactLayout} onChange={handleCompactLayoutChange} />
                            <label htmlFor="isCompactLayout">Kompaktiškas išdėstymas (mažiau paraščių)</label>
                         </div>
                     </div>
@@ -698,6 +866,39 @@ Sugeneruok planą.`;
             <button className="modal-close-button" onClick={() => setSelectedTerm(null)}>&times;</button>
             <h3>{selectedTerm.term}</h3>
             <p>{selectedTerm.definition}</p>
+          </div>
+        </div>
+      )}
+      {showOnboarding && (
+        <div className="modal-overlay">
+          <div className="modal-content onboarding-modal">
+            <div className="onboarding-step-content">
+                <h3>{onboardingSteps[onboardingStep].title}</h3>
+                <p>{onboardingSteps[onboardingStep].content}</p>
+            </div>
+            <div className="onboarding-dots">
+                {onboardingSteps.map((_, index) => (
+                    <span
+                        key={index}
+                        className={`dot ${onboardingStep === index ? 'active' : ''}`}
+                    ></span>
+                ))}
+            </div>
+            <div className="onboarding-nav">
+                {onboardingStep < onboardingSteps.length - 1 && (
+                    <button onClick={closeOnboarding} className="button-secondary">Praleisti</button>
+                )}
+                 <div>
+                    {onboardingStep > 0 && (
+                        <button onClick={() => setOnboardingStep(s => s - 1)} className="button-secondary">Atgal</button>
+                    )}
+                    {onboardingStep < onboardingSteps.length - 1 ? (
+                        <button onClick={() => setOnboardingStep(s => s + 1)} className="button-primary">Toliau</button>
+                    ) : (
+                        <button onClick={closeOnboarding} className="button-primary">Užbaigti</button>
+                    )}
+                </div>
+            </div>
           </div>
         </div>
       )}
