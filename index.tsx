@@ -414,8 +414,7 @@ Sugeneruok planą.`;
 
   const handleDeletePlan = (planId: string) => {
     if (window.confirm('Ar tikrai norite ištrinti šį planą?')) {
-      const updatedPlans = savedPlans.filter(p => p.id !== planId);
-      setSavedPlans(updatedPlans);
+      setSavedPlans(prevPlans => prevPlans.filter(p => p.id !== planId));
       if (activePlanId === planId) {
         setLessonPlan(null);
         setActivePlanId(null);
